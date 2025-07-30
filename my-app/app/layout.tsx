@@ -30,8 +30,6 @@ export default function RootLayout({
       >
         <Providers>
           {children}
-          {/* <WalletDebug /> */}
-          {/* <MetaMaskTest /> */}
         </Providers>
       </body>
     </html>
