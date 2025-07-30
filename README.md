@@ -2,7 +2,6 @@
 
 A modern, responsive cryptocurrency trading dashboard built with **Next.js 15**, **React 19**, **Tailwind CSS**, and **Wagmi** for Web3 wallet integration. Features real-time cryptocurrency data, wallet connection, message signing, and BNB balance display.
 
-![Project Preview](https://via.placeholder.com/800x400/47fc28/000000?text=Crypto+Trading+Dashboard)
 
 ## ✨ Features
 
