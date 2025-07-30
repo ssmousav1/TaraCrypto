@@ -2,6 +2,7 @@ import React, { JSX } from "react";
 import { HeaderSection } from "./sections/HeaderSection";
 import { TokenListSection } from "./sections/TokenListSection";
 import { MainContentSection } from "./sections/MainContentSection/MainContentSection";
+import Image from "next/image";
 // import { HeaderSection } from "./sections/HeaderSection";
 // import { MainContentSection } from "./sections/MainContentSection/MainContentSection";
 // import { TokenListSection } from "./sections/TokenListSection";
@@ -13,7 +14,9 @@ export const Design = (): JSX.Element => {
       data-model-id="1:10"
     >
       {/* Background blur image */}
-      <img
+      <Image
+        width={50}
+        height={50}
         className="absolute w-full h-full top-0 left-0 blur-[15px] object-cover"
         alt="Background texture"
         src="https://c.animaapp.com/mdlodzlxjRuFxk/img/34101981-rm311-ploy-14b.png"
@@ -22,7 +25,7 @@ export const Design = (): JSX.Element => {
       {/* Header section at the top */}
       <HeaderSection />
 
-      <div className="relative z-10 flex flex-col gap-8 md:gap-12 lg:gap-[60px] pt-6 md:pt-8 lg:pt-10 pb-12 md:pb-16 lg:pb-[100px] px-4 sm:px-6 md:px-12 lg:px-[120px]">
+      <div className="relative z-10 flex flex-col gap-8 md:gap-12 lg:gap-[60px] pt-6 md:pt-8 lg:pt-10 pb-12 md:pb-16 lg:pb-[100px] px-4 sm:px-6 md:px-12 lg:px-[120px] ">
         {/* Token list section */}
         <TokenListSection />
 
