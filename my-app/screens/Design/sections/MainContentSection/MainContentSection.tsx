@@ -1,36 +1,79 @@
 "use client";
-import React, { JSX } from "react";
+import React, { JSX, useRef, useEffect, useState } from "react";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import Image from "next/image";
 import { Card, CardContent } from "../../../../components/ui/card";
 import { useWalletStatus } from "../../../../hooks/useWalletStatus";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchTokens, Token } from "../../../../lib/api";
+import { fetchTokens } from "../../../../lib/api";
 
 export const MainContentSection = (): JSX.Element => {
   const { isConnected, isConnecting } = useWalletStatus();
   const queryClient = useQueryClient();
-  
+  const lastUpdatedRef = useRef<Date | null>(null);
+  const [startTime, setStartTime] = useState(null);
+  const [now, setNow] = useState(null);
+  const intervalRef = useRef(null);
+  // let intervalRef = useRef(0);
+
+  // const decreaseNum = () => setNum((prev) => prev - 1);
+
+  useEffect(() => {
+    // intervalRef.current = setInterval(decreaseNum, 1000);
+    // return () => clearInterval(intervalRef.current);
+  }, []);
+
+  function handleStart() {
+    setStartTime(Date.now());
+    setNow(Date.now());
+
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setNow(Date.now());
+    }, 10);
+  }
+
+  function handleStop() {
+    clearInterval(intervalRef.current);
+  }
+  let secondsPassed = 0;
+  if (startTime != null && now != null) {
+    secondsPassed = (now - startTime) / 1000;
+  }
   const {
     data: tokens = [],
     isLoading: loading,
     error,
     isFetching: isRefreshing,
-    dataUpdatedAt
+    dataUpdatedAt,
   } = useQuery({
-    queryKey: ['tokens'],
+    queryKey: ["tokens"],
     queryFn: fetchTokens,
     refetchInterval: 60000, // Auto-refresh every 60 seconds
     staleTime: 30000, // Consider data stale after 30 seconds
     refetchOnWindowFocus: true,
   });
 
+  // Update lastUpdated ref when data changes
+  useEffect(() => {
+    if (
+      dataUpdatedAt &&
+      (!lastUpdatedRef.current ||
+        dataUpdatedAt > lastUpdatedRef.current.getTime())
+    ) {
+      handleStop()
+      lastUpdatedRef.current = new Date(dataUpdatedAt);
+      handleStart()
+    }
+  }, [dataUpdatedAt]);
+
+
+
   const handleManualRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ['tokens'] });
+    queryClient.invalidateQueries({ queryKey: ["tokens"] });
   };
 
-  const lastUpdated = dataUpdatedAt ? new Date(dataUpdatedAt) : null;
   const errorMessage = error instanceof Error ? error.message : null;
 
   const formatPrice = (price: number) => {
@@ -67,33 +110,17 @@ export const MainContentSection = (): JSX.Element => {
 
   const handleBuyToken = (tokenSymbol: string) => {
     if (!isConnected) {
-      alert('Please connect your wallet first');
+      alert("Please connect your wallet first");
       return;
     }
-    
+
     // Placeholder for actual token purchase logic
-    alert(`Buy ${tokenSymbol} - This would integrate with a DEX or swap protocol`);
+    alert(
+      `Buy ${tokenSymbol} - This would integrate with a DEX or swap protocol`
+    );
   };
 
 
-  const formatLastUpdated = (date: Date) => {
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) {
-      return `${diffInSeconds}s ago`;
-    } else if (diffInSeconds < 3600) {
-      return `${Math.floor(diffInSeconds / 60)}m ago`;
-    } else {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-  };
-
-  // const chartImage1 = "https://c.animaapp.com/mdlodzlxjRuFxk/img/vector-1.svg";
-  // const chartImage2 = "https://c.animaapp.com/mdlodzlxjRuFxk/img/vector-5.svg";
-  // const upArrowImage1 = "https://c.animaapp.com/mdlodzlxjRuFxk/img/vector.svg";
-  // const upArrowImage2 =
-  //   "https://c.animaapp.com/mdlodzlxjRuFxk/img/vector-3.svg";
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-4 w-full">
@@ -110,10 +137,12 @@ export const MainContentSection = (): JSX.Element => {
           )}
         </div>
         <div className="flex items-center gap-4">
-          {lastUpdated && (
+          {lastUpdatedRef.current && (
             <div className="flex items-center gap-2 text-gray-400 text-sm">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
+              <span>
+                 Last updated: {secondsPassed.toFixed(0)}s
+              </span>
               <span className="text-xs">• Auto-refreshes every 60s</span>
             </div>
           )}
@@ -122,7 +151,7 @@ export const MainContentSection = (): JSX.Element => {
             disabled={isRefreshing}
             className="h-8 px-3 py-1 bg-transparent border border-[#47fc28]/30 text-[#47fc28] hover:bg-[#47fc28]/10 text-xs disabled:opacity-50"
           >
-            {isRefreshing ? 'Refreshing...' : 'Refresh Now'}
+            {isRefreshing ? "Refreshing..." : "Refresh Now"}
           </Button>
         </div>
       </header>
@@ -167,114 +196,118 @@ export const MainContentSection = (): JSX.Element => {
 
                 {/* Token rows */}
                 {tokens.map((token) => {
-              const isPositive = token.price_change_percentage_24h >= 0;
+                  const isPositive = token.price_change_percentage_24h >= 0;
 
-              return (
-                <div
-                  key={token.id}
-                  className="flex items-center justify-between px-4 py-2 bg-[#0a1f0699] rounded-[10px] overflow-hidden mb-1.5"
-                >
-                  <div className="w-5 flex-shrink-0 text-[#94ff82] text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                    {token.market_cap_rank}
-                  </div>
-
-                  <div className="w-[200px] flex-shrink-0 flex items-center gap-2">
-                    <Image
-                      width={50}
-                      height={50}
-                      className="w-[42px] h-[42px] object-cover rounded-full"
-                      alt={`${token.name} icon`}
-                      src={token.image}
-                    />
-                    <div className="flex flex-col items-start justify-center">
-                      <div className="text-white text-base font-text-base-font-semibold font-[number:var(--text-base-font-semibold-font-weight)] tracking-[var(--text-base-font-semibold-letter-spacing)] leading-[var(--text-base-font-semibold-line-height)] [font-style:var(--text-base-font-semibold-font-style)] uppercase">
-                        {token.symbol}
-                      </div>
-                      <div className="text-[#bfbfbf] text-xs [font-family:'Roboto',Helvetica] font-normal leading-4">
-                        {token.name}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex w-[180px] flex-shrink-0 items-center gap-1">
-                    <span className="text-[#e6e6e6] text-sm [font-family:'Roboto',Helvetica] font-normal leading-5">
-                      {formatPrice(token.current_price)}
-                    </span>
-                    <Badge
-                      className={`h-5 ${
-                        isPositive
-                          ? "bg-[#17c9641a] text-[#58c16d]"
-                          : "bg-red-900/10 text-red-500"
-                      } text-[10px] font-normal rounded-[5px] flex items-center gap-1 p-1`}
+                  return (
+                    <div
+                      key={token.id}
+                      className="flex items-center justify-between px-4 py-2 bg-[#0a1f0699] rounded-[10px] overflow-hidden mb-1.5"
                     >
-                      <div className="relative w-3 h-3">
-                        <div className="relative w-1.5 h-1">
-                          {isPositive ? (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={2.5}
-                              stroke="currentColor"
-                              className="size-6"
-                              style={{ width: "12px", height: "12px" }}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={2.5}
-                              stroke="currentColor"
-                              style={{ width: "12px", height: "12px" }}
-                              className="size-6"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                              />
-                            </svg>
-                          )}
+                      <div className="w-5 flex-shrink-0 text-[#94ff82] text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                        {token.market_cap_rank}
+                      </div>
+
+                      <div className="w-[200px] flex-shrink-0 flex items-center gap-2">
+                        <Image
+                          width={50}
+                          height={50}
+                          className="w-[42px] h-[42px] object-cover rounded-full"
+                          alt={`${token.name} icon`}
+                          src={token.image}
+                        />
+                        <div className="flex flex-col items-start justify-center">
+                          <div className="text-white text-base font-text-base-font-semibold font-[number:var(--text-base-font-semibold-font-weight)] tracking-[var(--text-base-font-semibold-letter-spacing)] leading-[var(--text-base-font-semibold-line-height)] [font-style:var(--text-base-font-semibold-font-style)] uppercase">
+                            {token.symbol}
+                          </div>
+                          <div className="text-[#bfbfbf] text-xs [font-family:'Roboto',Helvetica] font-normal leading-4">
+                            {token.name}
+                          </div>
                         </div>
                       </div>
-                      {isPositive ? "+" : ""}
-                      {token.price_change_percentage_24h.toFixed(2)}%
-                    </Badge>
-                  </div>
 
-                  <div className="w-[120px] flex-shrink-0 hidden md:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                    {formatMarketCap(token.market_cap)}
-                  </div>
+                      <div className="flex w-[180px] flex-shrink-0 items-center gap-1">
+                        <span className="text-[#e6e6e6] text-sm [font-family:'Roboto',Helvetica] font-normal leading-5">
+                          {formatPrice(token.current_price)}
+                        </span>
+                        <Badge
+                          className={`h-5 ${
+                            isPositive
+                              ? "bg-[#17c9641a] text-[#58c16d]"
+                              : "bg-red-900/10 text-red-500"
+                          } text-[10px] font-normal rounded-[5px] flex items-center gap-1 p-1`}
+                        >
+                          <div className="relative w-3 h-3">
+                            <div className="relative w-1.5 h-1">
+                              {isPositive ? (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={2.5}
+                                  stroke="currentColor"
+                                  className="size-6"
+                                  style={{ width: "12px", height: "12px" }}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                                  />
+                                </svg>
+                              ) : (
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={2.5}
+                                  stroke="currentColor"
+                                  style={{ width: "12px", height: "12px" }}
+                                  className="size-6"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          {isPositive ? "+" : ""}
+                          {token.price_change_percentage_24h.toFixed(2)}%
+                        </Badge>
+                      </div>
 
-                  <div className="w-[120px] flex-shrink-0 hidden lg:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                    {formatMarketCap(token.total_volume)}
-                  </div>
+                      <div className="w-[120px] flex-shrink-0 hidden md:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                        {formatMarketCap(token.market_cap)}
+                      </div>
 
-                  <div className="w-[120px] flex-shrink-0 hidden lg:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                    {formatSupply(token.total_supply)}
-                  </div>
+                      <div className="w-[120px] flex-shrink-0 hidden lg:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                        {formatMarketCap(token.total_volume)}
+                      </div>
 
-                  <Button 
-                    onClick={() => handleBuyToken(token.symbol)}
-                    disabled={isConnecting}
-                    className={`w-[120px] flex-shrink-0 h-10 rounded transition-colors ${
-                      isConnected 
-                        ? 'bg-[#14381b] text-[#15ff44] hover:bg-[#1a4522]' 
-                        : 'bg-gray-600 text-gray-400 hover:bg-gray-500'
-                    }`}
-                  >
-                    {isConnecting ? 'Connecting...' : isConnected ? 'Buy Token' : 'Connect Wallet'}
-                  </Button>
-                </div>
-                );
-              })}
+                      <div className="w-[120px] flex-shrink-0 hidden lg:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                        {formatSupply(token.total_supply)}
+                      </div>
+
+                      <Button
+                        onClick={() => handleBuyToken(token.symbol)}
+                        disabled={isConnecting}
+                        className={`w-[120px] flex-shrink-0 h-10 rounded transition-colors ${
+                          isConnected
+                            ? "bg-[#14381b] text-[#15ff44] hover:bg-[#1a4522]"
+                            : "bg-gray-600 text-gray-400 hover:bg-gray-500"
+                        }`}
+                      >
+                        {isConnecting
+                          ? "Connecting..."
+                          : isConnected
+                          ? "Buy Token"
+                          : "Connect Wallet"}
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
