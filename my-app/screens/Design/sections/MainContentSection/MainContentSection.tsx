@@ -4,6 +4,7 @@ import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import Image from "next/image";
 import { Card, CardContent } from "../../../../components/ui/card";
+import { useWalletStatus } from "../../../../hooks/useWalletStatus";
 
 interface Token {
   id: string;
@@ -22,6 +23,7 @@ export const MainContentSection = (): JSX.Element => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isConnected, isConnecting } = useWalletStatus();
 
   useEffect(() => {
     const fetchTokens = async () => {
@@ -76,6 +78,16 @@ export const MainContentSection = (): JSX.Element => {
       return `${(supply / 1e6).toFixed(2)}M`;
     }
     return supply.toFixed(0);
+  };
+
+  const handleBuyToken = (tokenSymbol: string) => {
+    if (!isConnected) {
+      alert('Please connect your wallet first');
+      return;
+    }
+    
+    // Placeholder for actual token purchase logic
+    alert(`Buy ${tokenSymbol} - This would integrate with a DEX or swap protocol`);
   };
 
   // const chartImage1 = "https://c.animaapp.com/mdlodzlxjRuFxk/img/vector-1.svg";
@@ -226,8 +238,16 @@ export const MainContentSection = (): JSX.Element => {
                     {formatSupply(token.total_supply)}
                   </div>
 
-                  <Button className="w-[120px] flex-shrink-0 h-10 bg-[#14381b] text-[#15ff44] rounded hover:bg-[#1a4522] transition-colors">
-                    Buy Token
+                  <Button 
+                    onClick={() => handleBuyToken(token.symbol)}
+                    disabled={isConnecting}
+                    className={`w-[120px] flex-shrink-0 h-10 rounded transition-colors ${
+                      isConnected 
+                        ? 'bg-[#14381b] text-[#15ff44] hover:bg-[#1a4522]' 
+                        : 'bg-gray-600 text-gray-400 hover:bg-gray-500'
+                    }`}
+                  >
+                    {isConnecting ? 'Connecting...' : isConnected ? 'Buy Token' : 'Connect Wallet'}
                   </Button>
                 </div>
                 );
