@@ -86,8 +86,8 @@ export const MainContentSection = (): JSX.Element => {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-4 w-full">
-      <header className="flex items-center justify-center py-4 w-full">
-        <h1 className="font-semibold text-white text-[32px] text-center leading-7 [font-family:'Roboto',Helvetica]">
+      <header className="flex items-center justify-center py-4 w-full px-4">
+        <h1 className="font-semibold text-white text-2xl md:text-[32px] text-center leading-7 [font-family:'Roboto',Helvetica]">
           Top 10 Trending Tokens
         </h1>
       </header>
@@ -101,50 +101,49 @@ export const MainContentSection = (): JSX.Element => {
           <p className="text-red-500 text-lg">Error: {error}</p>
         </div>
       ) : (
-        <Card className="w-full bg-transparent border-0 shadow-none">
-          <CardContent className="p-0 space-y-2">
-            {/* Table header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-[#0a1f0699] rounded-[10px] overflow-hidden">
-              <div className="w-5"></div>
-              <div className="w-[114px]">
-                <span className="text-[#00c727] text-xs [font-family:'Roboto',Helvetica] font-normal leading-4">
-                  Name
-                </span>
-              </div>
-              <div className="flex items-center justify-between pl-16 pr-8 flex-1">
-                <div className="w-[140px] text-[#00c727] text-xs [font-family:'Roboto',Helvetica] font-normal leading-4">
-                  Price
+        <div className="w-full overflow-x-auto">
+          <Card className="w-full bg-transparent border-0 shadow-none">
+            <CardContent className="p-0 space-y-2">
+              <div className="min-w-[860px]">
+                {/* Table header */}
+                <div className="flex items-center justify-between  mb-1.5 px-4 py-2 bg-[#0a1f0699] rounded-[10px] overflow-hidden">
+                  <div className="w-5 flex-shrink-0"></div>
+                  <div className="w-[200px] flex-shrink-0">
+                    <span className="text-[#00c727] text-xs [font-family:'Roboto',Helvetica] font-normal leading-4">
+                      Name
+                    </span>
+                  </div>
+                  <div className="w-[180px] flex-shrink-0 text-[#00c727] text-xs [font-family:'Roboto',Helvetica] font-normal leading-4">
+                    Price
+                  </div>
+                  <div className="w-[120px] flex-shrink-0 hidden md:block text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
+                    Marketcap
+                  </div>
+                  <div className="w-[120px] flex-shrink-0 hidden lg:block text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
+                    Total Volume
+                  </div>
+                  <div className="w-[120px] flex-shrink-0 hidden lg:block text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
+                    Total supply
+                  </div>
+                  <div className="w-[120px] flex-shrink-0 text-center text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
+                    Action
+                  </div>
                 </div>
-                <div className="w-20 text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
-                  Marketcap
-                </div>
-                <div className="w-20 text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
-                  Total Volume
-                </div>
-                <div className="w-20 text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
-                  Total supply
-                </div>
-                {/* <div className="w-40 text-[#00c727] text-xs font-text-xs-font-medium font-[number:var(--text-xs-font-medium-font-weight)] tracking-[var(--text-xs-font-medium-letter-spacing)] leading-[var(--text-xs-font-medium-line-height)] [font-style:var(--text-xs-font-medium-font-style)]">
-                  Price Changes Chart
-                </div> */}
-              </div>
-              <div className="w-[120px]"></div>
-            </div>
 
-            {/* Token rows */}
-            {tokens.map((token) => {
+                {/* Token rows */}
+                {tokens.map((token) => {
               const isPositive = token.price_change_percentage_24h >= 0;
 
               return (
                 <div
                   key={token.id}
-                  className="flex items-center justify-between px-4 py-2 bg-[#0a1f0699] rounded-[10px] overflow-hidden"
+                  className="flex items-center justify-between px-4 py-2 bg-[#0a1f0699] rounded-[10px] overflow-hidden mb-1.5"
                 >
-                  <div className="w-5 text-[#94ff82] text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                  <div className="w-5 flex-shrink-0 text-[#94ff82] text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
                     {token.market_cap_rank}
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="w-[200px] flex-shrink-0 flex items-center gap-2">
                     <Image
                       width={50}
                       height={50}
@@ -162,100 +161,81 @@ export const MainContentSection = (): JSX.Element => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pl-16 pr-8 flex-1">
-                    <div className="flex w-[140px] items-center gap-1">
-                      <span className="text-[#e6e6e6] text-sm [font-family:'Roboto',Helvetica] font-normal leading-5">
-                        {formatPrice(token.current_price)}
-                      </span>
-                      <Badge
-                        className={`h-5 ${
-                          isPositive
-                            ? "bg-[#17c9641a] text-[#58c16d]"
-                            : "bg-red-900/10 text-red-500"
-                        } text-[10px] font-normal rounded-[5px] flex items-center gap-1 p-1`}
-                      >
-                        <div className="relative w-3 h-3">
-                          <div className="relative w-1.5 h-1 top-1 left-[3px]">
-                            {isPositive ? (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2.5}
-                                stroke="currentColor"
-                                className="size-6"
-                                style={{ width: "12px", height: "12px" }}
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                                />
-                              </svg>
-                            ) : (
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2.5}
-                                stroke="currentColor"
-                                style={{ width: "12px", height: "12px" }}
-                                className="size-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                                />
-                              </svg>
-                            )}
-                          </div>
+                  <div className="flex w-[180px] flex-shrink-0 items-center gap-1">
+                    <span className="text-[#e6e6e6] text-sm [font-family:'Roboto',Helvetica] font-normal leading-5">
+                      {formatPrice(token.current_price)}
+                    </span>
+                    <Badge
+                      className={`h-5 ${
+                        isPositive
+                          ? "bg-[#17c9641a] text-[#58c16d]"
+                          : "bg-red-900/10 text-red-500"
+                      } text-[10px] font-normal rounded-[5px] flex items-center gap-1 p-1`}
+                    >
+                      <div className="relative w-3 h-3">
+                        <div className="relative w-1.5 h-1">
+                          {isPositive ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2.5}
+                              stroke="currentColor"
+                              className="size-6"
+                              style={{ width: "12px", height: "12px" }}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2.5}
+                              stroke="currentColor"
+                              style={{ width: "12px", height: "12px" }}
+                              className="size-6"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                              />
+                            </svg>
+                          )}
                         </div>
-                        {isPositive ? "+" : ""}
-                        {token.price_change_percentage_24h.toFixed(2)}%
-                      </Badge>
-                    </div>
-
-                    <div className="w-20 text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                      {formatMarketCap(token.market_cap)}
-                    </div>
-
-                    <div className="w-20 text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                      {formatMarketCap(token.total_volume)}
-                    </div>
-
-                    <div className="w-20 text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
-                      {formatSupply(token.total_supply)}
-                    </div>
-
-                    {/* <div className="w-40 h-7 rotate-180">
-                      <div className="relative h-7">
-                        <Image
-                          className="absolute w-40 h-7 top-0 left-0 -rotate-180"
-                          height={50}
-                          alt="Price chart"
-                          width={50}
-                          src={chartImage1}
-                        />
-                        <Image
-                          className="absolute w-40 h-3.5 top-[15px] left-0 -rotate-180"
-                          alt="Price chart"
-                          height={50}
-                          width={50}
-                          src={chartImage2}
-                        />
                       </div>
-                    </div> */}
+                      {isPositive ? "+" : ""}
+                      {token.price_change_percentage_24h.toFixed(2)}%
+                    </Badge>
                   </div>
 
-                  <Button className="w-[120px] h-10 bg-[#14381b] text-[#15ff44] rounded hover:bg-[#1a4522] transition-colors">
+                  <div className="w-[120px] flex-shrink-0 hidden md:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                    {formatMarketCap(token.market_cap)}
+                  </div>
+
+                  <div className="w-[120px] flex-shrink-0 hidden lg:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                    {formatMarketCap(token.total_volume)}
+                  </div>
+
+                  <div className="w-[120px] flex-shrink-0 hidden lg:block text-white text-xs font-text-xs-font-semibold font-[number:var(--text-xs-font-semibold-font-weight)] tracking-[var(--text-xs-font-semibold-letter-spacing)] leading-[var(--text-xs-font-semibold-line-height)] [font-style:var(--text-xs-font-semibold-font-style)]">
+                    {formatSupply(token.total_supply)}
+                  </div>
+
+                  <Button className="w-[120px] flex-shrink-0 h-10 bg-[#14381b] text-[#15ff44] rounded hover:bg-[#1a4522] transition-colors">
                     Buy Token
                   </Button>
                 </div>
-              );
-            })}
-          </CardContent>
-        </Card>
+                );
+              })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </section>
   );

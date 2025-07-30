@@ -3,6 +3,36 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Brand Colors */
+  --primary: #47fc28;
+  --primary-hover: #3be01f;
+  --secondary: #00c727;
+  --accent: #15ff44;
+  
+  /* Green Shades */
+  --green-light: #94ff82;
+  --green-medium: #58c16d;
+  --green-dark: #14381b;
+  --green-darker: #1a4522;
+  
+  /* Background Colors */
+  --bg-header: rgba(0, 0, 0, 0.5);
+  --bg-card: rgba(10, 31, 6, 0.6);
+  --bg-positive: rgba(23, 201, 100, 0.1);
+  --bg-negative: rgba(153, 27, 27, 0.1);
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e6e6e6;
+  --text-tertiary: #bfbfbf;
+  --text-success: #58c16d;
+  --text-error: #ef4444;
+  
+  /* Border Colors */
+  --border-light: rgba(255, 255, 255, 0.5);
+  --border-primary: rgba(71, 252, 40, 0.2);
+  --border-card: rgba(71, 252, 40, 0.1);
 }
 
 @theme inline {
@@ -10,6 +40,28 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Map CSS variables to Tailwind color names */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-green-light: var(--green-light);
+  --color-green-medium: var(--green-medium);
+  --color-green-dark: var(--green-dark);
+  --color-green-darker: var(--green-darker);
+  --color-bg-header: var(--bg-header);
+  --color-bg-card: var(--bg-card);
+  --color-bg-positive: var(--bg-positive);
+  --color-bg-negative: var(--bg-negative);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-success: var(--text-success);
+  --color-text-error: var(--text-error);
+  --color-border-light: var(--border-light);
+  --color-border-primary: var(--border-primary);
+  --color-border-card: var(--border-card);
 }
 
 @media (prefers-color-scheme: dark) {
